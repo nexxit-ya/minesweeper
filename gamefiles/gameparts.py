@@ -13,6 +13,8 @@ BORDER_COLOR = (100, 100, 100)
 
 BOMB = pg.image.load('gamefiles/sprites/bomb.png')
 
+FLAG = pg.image.load('gamefiles/sprites/flag.png')
+
 APPLE_COLOR = (255, 0, 0)
 
 GRID_SIZE = 20
@@ -49,6 +51,20 @@ class cell():
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
+class flag():
+    def __init__(self):
+        self.positions = []
+        self.body_color = FLAG
+
+    def draw(self, screen):
+        for coords in self.positions:
+            pos_x, pos_y = coords
+            rect = self.body_color.get_rect(center=(pos_x + (GRID_SIZE // 2),
+                                                    pos_y + (GRID_SIZE // 2)))
+            screen.blit(self.body_color, rect)
+            pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+
 class bomb():
     """Класс бомбы."""
     def __init__(self, count):
@@ -79,11 +95,12 @@ class bomb():
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
-def event_handler(bomb):
+def event_handler(bomb, flag):
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
-        elif event.type == pg.MOUSEBUTTONDOWN:
+        elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            print(event.button)
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
             print(click_coordinates)
@@ -91,3 +108,10 @@ def event_handler(bomb):
                 bomb.found += 1
                 bomb.coordinates.remove(click_coordinates)
                 print('found')
+        elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+            pos_x, pos_y = pg.mouse.get_pos()
+            click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
+            if click_coordinates in bomb.coordinates:
+                pass
+            if click_coordinates not in flag.positions:
+                flag.positions.append(click_coordinates)
