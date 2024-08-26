@@ -42,8 +42,18 @@ class cell():
                           for x in range(0, FIELD_WIDTH)
                           for y in range(0, FIELD_HEIGHT)]
 
-    def test(self, coords):
-        return self.positions[coords]['bomb']
+    def get_near_cells(self, coords):
+        """Получение координат соседних ячеек."""
+        x, y = coords
+        near_cells = [(x + GRID_SIZE, y),
+                      (x - GRID_SIZE, y),
+                      (x, y + GRID_SIZE),
+                      (x, y - GRID_SIZE),
+                      (x + GRID_SIZE, y + GRID_SIZE),
+                      (x - GRID_SIZE, y - GRID_SIZE),
+                      (x + GRID_SIZE, y - GRID_SIZE),
+                      (x - GRID_SIZE, y + GRID_SIZE)]
+        return near_cells
 
     def draw(self, screen):
         for position in self.positions:
@@ -119,6 +129,12 @@ def event_handler(cover, bomb, flag, free_cell):
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
             if click_coordinates not in bomb.coordinates:
                 free_cell.positions.append(click_coordinates)
+                near_cells = cover.get_near_cells(click_coordinates)
+                for cell in near_cells:
+                    if cell in bomb.coordinates:
+                        flag.positions.append(cell)
+                        near_cells.remove(cell)
+                free_cell.positions.extend(near_cells)
             else:
                 cover.positions.clear()
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
