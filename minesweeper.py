@@ -15,14 +15,16 @@ def main():
     board = game.cell()
     bombs = game.bomb(30)
     flags = game.flag()
-
+    free_cells = game.free_cell()
     screen.fill(game.BACKGROUND_COLOR)
     while True:
         clock.tick(game.SPEED)
-        game.event_handler(bombs, flags)
-        board.draw(screen)
+        game.event_handler(board, bombs, flags, free_cells)
         bombs.draw(screen)
+        board.draw(screen)
         flags.draw(screen)
+        free_cells.draw(screen)
+        print(free_cells.positions)
         pg.display.set_caption(f'Сапёр. Найдено бомб: {bombs.found} из {bombs.count}')
         pg.display.update()
 

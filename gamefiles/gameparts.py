@@ -9,6 +9,8 @@ BACKGROUND_COLOR = (153, 153, 153)
 
 CELL_COLOR = (140, 140, 140)
 
+FREE_CELL_COLOR = (255, 255, 255)
+
 BORDER_COLOR = (100, 100, 100)
 
 BOMB = pg.image.load('gamefiles/sprites/bomb.png')
@@ -36,15 +38,28 @@ class cell():
         self.bomb_color = APPLE_COLOR
         self.bomb_count = bomb_count
         self.bomb_coordinates = []
-        self.positions = {(x * GRID_SIZE, y * GRID_SIZE): {'bomb': False, 'clicked': False}
+        self.positions = [(x * GRID_SIZE, y * GRID_SIZE)
                           for x in range(0, FIELD_WIDTH)
-                          for y in range(0, FIELD_HEIGHT)}
+                          for y in range(0, FIELD_HEIGHT)]
 
     def test(self, coords):
         return self.positions[coords]['bomb']
 
     def draw(self, screen):
-        for position in self.positions.keys():
+        for position in self.positions:
+            rect = pg.Rect((position[0],
+                            position[1]), (GRID_SIZE, GRID_SIZE))
+            pg.draw.rect(screen, self.body_color, rect)
+            pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+
+class free_cell():
+    def __init__(self):
+        self.positions = []
+        self.body_color = FREE_CELL_COLOR
+
+    def draw(self, screen):
+        for position in self.positions:
             rect = pg.Rect((position[0],
                             position[1]), (GRID_SIZE, GRID_SIZE))
             pg.draw.rect(screen, self.body_color, rect)
@@ -95,19 +110,17 @@ class bomb():
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
-def event_handler(bomb, flag):
+def event_handler(cover, bomb, flag, free_cell):
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-            print(event.button)
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
-            print(click_coordinates)
-            if click_coordinates in bomb.coordinates:
-                bomb.found += 1
-                bomb.coordinates.remove(click_coordinates)
-                print('found')
+            if click_coordinates not in bomb.coordinates:
+                free_cell.positions.append(click_coordinates)
+            else:
+                cover.positions.clear()
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
