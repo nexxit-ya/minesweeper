@@ -17,6 +17,8 @@ BOMB = pg.image.load('gamefiles/sprites/bomb.png')
 
 FLAG = pg.image.load('gamefiles/sprites/flag.png')
 
+NUMBER_1 = pg.image.load('gamefiles/sprites/1.png')
+
 APPLE_COLOR = (255, 0, 0)
 
 GRID_SIZE = 20
@@ -42,7 +44,7 @@ class cell():
                           for x in range(0, FIELD_WIDTH)
                           for y in range(0, FIELD_HEIGHT)]
 
-    def get_near_cells(self, coords):
+    def get_near_cells(self, coords, bombs):
         """Получение координат соседних ячеек."""
         x, y = coords
         near_cells = [(x + GRID_SIZE, y),
@@ -53,7 +55,17 @@ class cell():
                       (x - GRID_SIZE, y - GRID_SIZE),
                       (x + GRID_SIZE, y - GRID_SIZE),
                       (x - GRID_SIZE, y + GRID_SIZE)]
+        self.check_for_bombs(near_cells, bombs)
         return near_cells
+
+    def check_for_bombs(self, coords, bomb):
+        bombs_near = []
+        print(bomb)
+        for coord in coords:
+            print(coords)
+            if coord in bomb:
+                bombs_near.append(coord)
+        return bombs_near
 
     def draw(self, screen):
         for position in self.positions:
@@ -61,6 +73,25 @@ class cell():
                             position[1]), (GRID_SIZE, GRID_SIZE))
             pg.draw.rect(screen, self.body_color, rect)
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+
+class Numbers():
+    def __init__(self, body_color=BOMB):
+        self.positions = []
+        self.body_color = body_color
+
+    def draw(self, screen):
+        for coords in self.positions:
+            pos_x, pos_y = coords
+            rect = self.body_color.get_rect(center=(pos_x + (GRID_SIZE // 2),
+                                                    pos_y + (GRID_SIZE // 2)))
+            screen.blit(self.body_color, rect)
+            pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+
+class near_1(Numbers):
+    def __init__(self):
+        super().__init__(body_color=NUMBER_1)
 
 
 class free_cell():
@@ -120,23 +151,24 @@ class bomb():
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
-def event_handler(cover, bomb, flag, free_cell):
+def event_handler(cover, bomb, flag, free_cell, numbers):
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
-            if click_coordinates not in bomb.coordinates:
-                free_cell.positions.append(click_coordinates)
-                near_cells = cover.get_near_cells(click_coordinates)
-                for cell in near_cells:
-                    if cell in bomb.coordinates:
-                        flag.positions.append(cell)
-                        near_cells.remove(cell)
-                free_cell.positions.extend(near_cells)
-            else:
+            if click_coordinates in bomb.coordinates:
                 cover.positions.clear()
+            elif click_coordinates in flag.positions or click_coordinates in free_cell.positions:
+                pass
+            else:
+                free_cell.positions.append(click_coordinates)
+                near_cells = cover.get_near_cells(click_coordinates, bomb.coordinates)
+                if len(cover.check_for_bombs(near_cells, bomb.coordinates)) == 0:
+                    free_cell.positions.extend(near_cells)
+                else:
+                    numbers.positions.append(click_coordinates)
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
