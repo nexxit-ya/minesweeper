@@ -13,7 +13,7 @@ def main():
     pg.init()
 
     board = game.cell()
-    bombs = game.bomb(100)
+    bombs = game.bomb(30)
     flags = game.flag()
     numbers = game.Numbers()
     free_cells = game.free_cell()
