@@ -15,3 +15,6 @@ There are currently 3 sprites:
 - for bomb
 - for flag
 - for number 1 (to mark cells with boms that are near)
+
+### TODO:
+- [] Add number sprites
