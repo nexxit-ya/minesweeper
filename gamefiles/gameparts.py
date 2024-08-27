@@ -64,16 +64,14 @@ class cell():
                       (x - GRID_SIZE, y - GRID_SIZE),
                       (x + GRID_SIZE, y - GRID_SIZE),
                       (x - GRID_SIZE, y + GRID_SIZE)]
-        self.check_for_bombs(near_cells, bombs)
-        return near_cells
+        num_of_bombs = self.check_for_bombs(near_cells, bombs)
+        return near_cells, num_of_bombs
 
     def check_for_bombs(self, coords, bomb):
-        bombs_near = []
-        print(bomb)
+        bombs_near = 0
         for coord in coords:
-            print(coords)
             if coord in bomb:
-                bombs_near.append(coord)
+                bombs_near += 1
         return bombs_near
 
     def draw(self, screen):
@@ -89,15 +87,19 @@ class Numbers():
         self.positions = []
 
     def set_position(self, number, coordinates):
+        if number > 2:
+            number = 2
+
         self.positions.append({'coordinates': coordinates, 'color': NUMBERS[number]})
+        self.body_color = NUMBERS[number]
         # position = {'coordinates': (x, y), 'number': NUMBERS[num]}
 
     def draw(self, screen):
-        for coords, color in self.positions:
-            pos_x, pos_y = coords
-            rect = self.body_color.get_rect(center=(pos_x + (GRID_SIZE // 2),
-                                                    pos_y + (GRID_SIZE // 2)))
-            screen.blit(color, rect)
+        for entry in self.positions:
+            pos_x, pos_y = entry['coordinates']
+            rect = entry['color'].get_rect(center=(pos_x + (GRID_SIZE // 2),
+                                                   pos_y + (GRID_SIZE // 2)))
+            screen.blit(entry['color'], rect)
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
@@ -158,24 +160,39 @@ class bomb():
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
-def event_handler(cover, bomb, flag, free_cell, numbers):
+def check_near_coords(click_coords, cells, bombs, flags, free_cells, numbers):
+    if (click_coords in bombs.coordinates) and (click_coords not in flags.positions):
+        cells.positions.clear()
+        print('Game Over!')
+        pg.display.set_caption('Game Over!')
+        pg.display.update()
+        global SPEED
+        SPEED = 0
+    elif (click_coords in flags.positions) or (click_coords in free_cells.positions):
+        pass
+    else:
+        free_cells.positions.append(click_coords)
+        near_cells, num_of_bombs = cells.get_near_cells(click_coords, bombs.coordinates)
+
+        if num_of_bombs == 0:
+            for cell in near_cells:
+                more_near_cells, near_bombs = cells.get_near_cells(cell, bombs.coordinates)
+                free_cells.positions.append(cell)
+                if near_bombs > 0:
+                    numbers.set_position(near_bombs, cell)
+        else:
+            numbers.set_position(num_of_bombs, click_coords)
+
+
+def event_handler(cells, bomb, flag, free_cell, numbers):
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
-            if click_coordinates in bomb.coordinates:
-                cover.positions.clear()
-            elif click_coordinates in flag.positions or click_coordinates in free_cell.positions:
-                pass
-            else:
-                free_cell.positions.append(click_coordinates)
-                near_cells = cover.get_near_cells(click_coordinates, bomb.coordinates)
-                if len(cover.check_for_bombs(near_cells, bomb.coordinates)) == 0:
-                    free_cell.positions.extend(near_cells)
-                else:
-                    numbers.positions.append(click_coordinates)
+            check_near_coords(click_coordinates, cells, bomb, flag, free_cell, numbers)
+
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
