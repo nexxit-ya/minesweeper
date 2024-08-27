@@ -13,6 +13,8 @@ FREE_CELL_COLOR = (255, 255, 255)
 
 BORDER_COLOR = (100, 100, 100)
 
+CLICK_FORBID = False
+
 NUMBERS = {
     1: pg.image.load('gamefiles/sprites/1.png'),
     2: pg.image.load('gamefiles/sprites/2.png'),
@@ -166,8 +168,8 @@ def check_near_coords(click_coords, cells, bombs, flags, free_cells, numbers):
         print('Game Over!')
         pg.display.set_caption('Game Over!')
         pg.display.update()
-        global SPEED
-        SPEED = 0
+        global CLICK_FORBID
+        CLICK_FORBID = True
     elif (click_coords in flags.positions) or (click_coords in free_cells.positions):
         pass
     else:
@@ -188,12 +190,12 @@ def event_handler(cells, bomb, flag, free_cell, numbers):
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
-        elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+        elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and not CLICK_FORBID:
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
             check_near_coords(click_coordinates, cells, bomb, flag, free_cell, numbers)
 
-        elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+        elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3 and not CLICK_FORBID:
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
             if click_coordinates in bomb.coordinates:
