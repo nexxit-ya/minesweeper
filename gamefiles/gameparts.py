@@ -13,11 +13,20 @@ FREE_CELL_COLOR = (255, 255, 255)
 
 BORDER_COLOR = (100, 100, 100)
 
+NUMBERS = {
+    1: pg.image.load('gamefiles/sprites/1.png'),
+    2: pg.image.load('gamefiles/sprites/2.png'),
+    # 3: pg.image.load('gamefiles/sprites/3.png'),
+    # 4: pg.image.load('gamefiles/sprites/4.png'),
+    # 5: pg.image.load('gamefiles/sprites/5.png'),
+    # 6: pg.image.load('gamefiles/sprites/6.png'),
+    # 7: pg.image.load('gamefiles/sprites/7.png'),
+    # 8: pg.image.load('gamefiles/sprites/8.png')
+}
+
 BOMB = pg.image.load('gamefiles/sprites/bomb.png')
 
 FLAG = pg.image.load('gamefiles/sprites/flag.png')
-
-NUMBER_1 = pg.image.load('gamefiles/sprites/1.png')
 
 APPLE_COLOR = (255, 0, 0)
 
@@ -76,22 +85,20 @@ class cell():
 
 
 class Numbers():
-    def __init__(self, body_color=BOMB):
+    def __init__(self):
         self.positions = []
-        self.body_color = body_color
+
+    def set_position(self, number, coordinates):
+        self.positions.append({'coordinates': coordinates, 'color': NUMBERS[number]})
+        # position = {'coordinates': (x, y), 'number': NUMBERS[num]}
 
     def draw(self, screen):
-        for coords in self.positions:
+        for coords, color in self.positions:
             pos_x, pos_y = coords
             rect = self.body_color.get_rect(center=(pos_x + (GRID_SIZE // 2),
                                                     pos_y + (GRID_SIZE // 2)))
-            screen.blit(self.body_color, rect)
+            screen.blit(color, rect)
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
-
-
-class near_1(Numbers):
-    def __init__(self):
-        super().__init__(body_color=NUMBER_1)
 
 
 class free_cell():
