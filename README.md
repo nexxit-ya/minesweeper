@@ -18,3 +18,5 @@ There are currently 3 sprites:
 
 ### TODO:
 - [ ] Add number sprites
+- [ ] Sophisticate logic further
+- [ ] Add difficulty [OPTIONAL]
