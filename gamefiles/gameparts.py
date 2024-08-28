@@ -105,6 +105,27 @@ class Numbers():
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
+class Stopwatch():
+    def __init__(self, speed):
+        self.speed = speed  # speed - number of ticks in 1 sec
+        self.ticks = 0  # num. of ticks from last second
+        self.time = 1  # num. of seconds from start
+        self.display_time = '00:01'
+
+    def update_time(self):
+        self.ticks += 1
+        if self.ticks == self.speed:
+            self.time += 1
+            self.ticks = 0
+        minutes = str(self.time // 60)
+        seconds = str(self.time % 60)
+        if int(seconds) < 10:
+            seconds = '0' + seconds
+        if int(minutes) < 10:
+            minutes = '0' + minutes
+        self.display_time = minutes + ':' + seconds
+
+
 class free_cell():
     def __init__(self):
         self.positions = []
@@ -166,7 +187,7 @@ class bomb():
 def check_near_coords(click_coords, cells, bombs, flags, free_cells, numbers):
     if (click_coords in bombs.coordinates) and (click_coords not in flags.positions):
         cells.positions.clear()
-        print('Game Over!')
+        pg.display.set_caption('Game Over!')
         global CLICK_FORBID
         CLICK_FORBID = True
     elif (click_coords in flags.positions) or (click_coords in free_cells.positions):
