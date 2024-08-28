@@ -241,11 +241,13 @@ def event_handler(cells, bomb, flag, free_cell, numbers):
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
             if click_coordinates in bomb.coordinates:
                 pass
-
-            if click_coordinates not in flag.positions:
-                flag.positions.append(click_coordinates)
-                flag.placed += 1
+            if len(flag.positions) != len(bomb.coordinates):
+                if click_coordinates not in flag.positions:
+                    flag.positions.append(click_coordinates)
+                    flag.placed += 1
+                else:
+                    flag.positions.remove(click_coordinates)
+                    flag.placed -= 1
+                check_win_state(cells, bomb, free_cell)
             else:
-                flag.positions.remove(click_coordinates)
-                flag.placed -= 1
-            check_win_state(cells, bomb, free_cell)
+                pass

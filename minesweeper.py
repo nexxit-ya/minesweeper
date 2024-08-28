@@ -30,7 +30,8 @@ def main():
         stopwatch.update_time()
         if not game.CLICK_FORBID:
             pg.display.set_caption(f'{stopwatch.display_time} | '
-                                   + f'Найдено бомб: {flags.placed} из {bombs.count}')
+                                   + 'Остаток флагов: '
+                                   f'{len(bombs.coordinates) - len(flags.positions)}')
         pg.display.update()
 
 
