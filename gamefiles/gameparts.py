@@ -26,12 +26,12 @@ CLICK_FORBID = False
 NUMBERS = {
     1: pg.image.load('gamefiles/sprites/1.png'),
     2: pg.image.load('gamefiles/sprites/2.png'),
-    # 3: pg.image.load('gamefiles/sprites/3.png'),
-    # 4: pg.image.load('gamefiles/sprites/4.png'),
-    # 5: pg.image.load('gamefiles/sprites/5.png'),
-    # 6: pg.image.load('gamefiles/sprites/6.png'),
-    # 7: pg.image.load('gamefiles/sprites/7.png'),
-    # 8: pg.image.load('gamefiles/sprites/8.png')
+    3: pg.image.load('gamefiles/sprites/3.png'),
+    4: pg.image.load('gamefiles/sprites/4.png'),
+    5: pg.image.load('gamefiles/sprites/5.png'),
+    6: pg.image.load('gamefiles/sprites/6.png'),
+    7: pg.image.load('gamefiles/sprites/7.png'),
+    8: pg.image.load('gamefiles/sprites/8.png')
 }
 
 # Спрайт бомбы
@@ -94,9 +94,6 @@ class Numbers():
 
     def set_position(self, number, coordinates):
         """Устанавливает координаты и цвет ячейки"""
-        if number > 2:
-            number = 2
-
         self.positions.append({'coordinates': coordinates, 'color': NUMBERS[number]})
         self.body_color = NUMBERS[number]
 
