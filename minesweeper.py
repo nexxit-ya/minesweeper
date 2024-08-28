@@ -17,6 +17,7 @@ def main():
     flags = game.flag()
     numbers = game.Numbers()
     free_cells = game.free_cell()
+    stopwatch = game.Stopwatch(game.SPEED)
     screen.fill(game.BACKGROUND_COLOR)
     while True:
         clock.tick(game.SPEED)
@@ -26,7 +27,10 @@ def main():
         flags.draw(screen)
         free_cells.draw(screen)
         numbers.draw(screen)
-        pg.display.set_caption(f'Сапёр. Найдено бомб: {flags.placed} из {bombs.count}')
+        stopwatch.update_time()
+        if not game.CLICK_FORBID:
+            pg.display.set_caption(f'{stopwatch.display_time} | '
+                                   + f'Найдено бомб: {flags.placed} из {bombs.count}')
         pg.display.update()
 
 
