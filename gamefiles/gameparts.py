@@ -195,7 +195,7 @@ class bomb():
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
-def check_near_coords(click_coords, cells, bombs, flags, free_cells, numbers):
+def click_check(click_coords, cells, bombs, flags, free_cells, numbers):
     """Проверка условий после нажатия на клетку"""
     if (click_coords in bombs.coordinates) and (click_coords not in flags.positions):
         cells.positions.clear()
@@ -226,7 +226,7 @@ def event_handler(cells, bomb, flag, free_cell, numbers):
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and not CLICK_FORBID:
             pos_x, pos_y = pg.mouse.get_pos()
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
-            check_near_coords(click_coordinates, cells, bomb, flag, free_cell, numbers)
+            click_check(click_coordinates, cells, bomb, flag, free_cell, numbers)
 
         elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3 and not CLICK_FORBID:
             pos_x, pos_y = pg.mouse.get_pos()
@@ -240,3 +240,8 @@ def event_handler(cells, bomb, flag, free_cell, numbers):
             else:
                 flag.positions.remove(click_coordinates)
                 flag.placed -= 1
+
+            if len(list(set(cells.coordinates) - set(bomb.positions))) == 0:
+                pg.display.set_caption('You win!')
+                global CLICK_FORBID
+                CLICK_FORBID = True
