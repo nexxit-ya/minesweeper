@@ -17,6 +17,6 @@ There are currently 3 sprites:
 - for number 1 (to mark cells with boms that are near)
 
 ### TODO:
-- [ ] Add number sprites
+- [x] Add number sprites
 - [ ] Sophisticate logic further
 - [ ] Add difficulty [OPTIONAL]
