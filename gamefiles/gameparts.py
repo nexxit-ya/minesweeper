@@ -218,6 +218,14 @@ def click_check(click_coords, cells, bombs, flags, free_cells, numbers):
             numbers.set_position(num_of_bombs, click_coords)
 
 
+def check_win_state(cells, bombs, free_cells):
+    """Проверка условий победы"""
+    global CLICK_FORBID
+    if len(list(set(cells.positions) - set(free_cells.positions))) == len(bombs.coordinates):
+        pg.display.set_caption('You win!')
+        CLICK_FORBID = True
+
+
 def event_handler(cells, bomb, flag, free_cell, numbers):
     """Обработка типов нажатий"""
     for event in pg.event.get():
@@ -240,8 +248,4 @@ def event_handler(cells, bomb, flag, free_cell, numbers):
             else:
                 flag.positions.remove(click_coordinates)
                 flag.placed -= 1
-
-            if len(list(set(cells.coordinates) - set(bomb.positions))) == 0:
-                pg.display.set_caption('You win!')
-                global CLICK_FORBID
-                CLICK_FORBID = True
+            check_win_state(cells, bomb, free_cell)
