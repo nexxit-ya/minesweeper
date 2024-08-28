@@ -122,6 +122,7 @@ class flag():
     def __init__(self):
         self.positions = []
         self.body_color = FLAG
+        self.placed = 0
 
     def draw(self, screen):
         for coords in self.positions:
@@ -166,8 +167,6 @@ def check_near_coords(click_coords, cells, bombs, flags, free_cells, numbers):
     if (click_coords in bombs.coordinates) and (click_coords not in flags.positions):
         cells.positions.clear()
         print('Game Over!')
-        pg.display.set_caption('Game Over!')
-        pg.display.update()
         global CLICK_FORBID
         CLICK_FORBID = True
     elif (click_coords in flags.positions) or (click_coords in free_cells.positions):
@@ -200,5 +199,10 @@ def event_handler(cells, bomb, flag, free_cell, numbers):
             click_coordinates = (pos_x - (pos_x % GRID_SIZE), pos_y - (pos_y % GRID_SIZE))
             if click_coordinates in bomb.coordinates:
                 pass
+
             if click_coordinates not in flag.positions:
                 flag.positions.append(click_coordinates)
+                flag.placed += 1
+            else:
+                flag.positions.remove(click_coordinates)
+                flag.placed -= 1

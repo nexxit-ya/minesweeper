@@ -26,7 +26,7 @@ def main():
         flags.draw(screen)
         free_cells.draw(screen)
         numbers.draw(screen)
-        pg.display.set_caption(f'Сапёр. Найдено бомб: {bombs.found} из {bombs.count}')
+        pg.display.set_caption(f'Сапёр. Найдено бомб: {flags.placed} из {bombs.count}')
         pg.display.update()
 
 
